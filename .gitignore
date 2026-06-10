@@ -1,0 +1,7 @@
+# Claude Code local server config — not part of the deliverable
+.claude/
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,211 @@
+================================================================
+  LMC SISTEMAS · GUÍA RÁPIDA PARA EL ADMINISTRADOR
+================================================================
+
+Esto es una web ESTÁTICA. Solo archivos. No hay base de datos, no
+hay panel de control, no hay servidor que mantener. Todo lo que
+ves en la web está en esta carpeta.
+
+----------------------------------------------------------------
+  CONTENIDO DE LA CARPETA
+----------------------------------------------------------------
+  index.html      ← La página. Si quieres tocar HTML, aquí.
+  styles.css      ← Los estilos. No tocar salvo que sepas.
+  main.js         ← Las animaciones. No tocar.
+  .htaccess       ← Reglas de caché en Hostinger. NO BORRAR.
+  lib/
+    gsap.min.js          ← Librería de animaciones (no tocar)
+    ScrollTrigger.min.js ← Librería de scroll (no tocar)
+    manifest.js          ← AQUÍ están los TEXTOS editables
+  assets/
+    img/            ← Imágenes (.jpg). Pesos < 2 MB.
+    photos/source/  ← Originales (puedes vaciar al subir)
+    credits.json    ← Créditos imágenes de stock
+  tools/            ← Carpeta vacía. Puedes borrarla.
+
+
+----------------------------------------------------------------
+  1 · CÓMO VER LA WEB EN TU ORDENADOR (PROBAR LOCAL)
+----------------------------------------------------------------
+
+  Haz DOBLE CLIC en index.html. Se abre en tu navegador.
+
+  Funciona en file:// (sin servidor) gracias al stack clásico
+  (sin módulos ES, sin npm, sin build).
+
+  Si quieres ver el formulario con envío real, sube a Hostinger
+  y prueba allí (ver punto 3).
+
+
+----------------------------------------------------------------
+  2 · CÓMO EDITAR TEXTOS, SERVICIOS, PROYECTOS, VALORES…
+----------------------------------------------------------------
+
+  Casi todo el contenido editable está en UN solo archivo:
+
+      lib/manifest.js
+
+  Ábrelo con el Bloc de notas (Windows) o TextEdit (Mac) o
+  cualquier editor de código (VS Code recomendado).
+
+  Verás bloques así:
+
+      services: [
+        {
+          id: "cctv",
+          name: "CCTV & Vigilancia",
+          desc: "Texto de la tarjeta...",
+          tech: ["Bosch", "Hikvision", "Axis"]
+        },
+        ...
+      ]
+
+  Cambia lo que está entre comillas " " y guarda.
+
+  IMPORTANTE: respeta las comas, las llaves { } y los corchetes [ ].
+  Si rompes la sintaxis, la web puede quedar en blanco. Si dudas,
+  haz copia del archivo ANTES de tocar.
+
+
+  Los textos PRINCIPALES (hero, secciones) están directamente en
+  index.html. Búscalos por su contenido con Ctrl+F y edita el
+  texto. NO toques las etiquetas <span>, <h1>, <p>…
+
+
+----------------------------------------------------------------
+  3 · CÓMO SUBIR LA WEB A HOSTINGER
+----------------------------------------------------------------
+
+  A) Por el Administrador de Archivos (lo más fácil):
+
+     1. Entra en tu panel de Hostinger.
+     2. Abre "Administrador de Archivos".
+     3. Entra en la carpeta "public_html".
+     4. Borra TODO lo que haya dentro (deja la carpeta).
+     5. SUBE TODOS los archivos de esta carpeta (no la carpeta
+        en sí, sino su contenido: index.html, .htaccess, lib/,
+        assets/, styles.css, main.js).
+        Puedes arrastrar y soltar, o usar el botón Subir.
+     6. Asegúrate de que .htaccess SE HA SUBIDO. Si no se ve,
+        activa "Mostrar archivos ocultos".
+     7. Abre tu dominio en el navegador. Listo.
+
+  B) Por FTP (si lo prefieres):
+
+     1. Configura FileZilla / Cyberduck con tus credenciales FTP
+        de Hostinger.
+     2. Conéctate a la carpeta /public_html/.
+     3. Borra el contenido y sube esta carpeta entera (su contenido).
+
+
+----------------------------------------------------------------
+  4 · CÓMO CAMBIAR EL EMAIL Y TELÉFONO DE CONTACTO
+----------------------------------------------------------------
+
+  Lugar 1: index.html
+     Busca "+34 900 000 000" (Ctrl+F) y cámbialo. Aparece 3 veces:
+       - Sección de contacto (panel izquierdo)
+       - Footer
+       - Atributo del enlace href="tel:+34900000000"
+
+     Busca "comercial@lmcsistemas.com" y cámbialo igual.
+
+  Lugar 2: lib/manifest.js
+     Verás los mismos datos. Cámbialos para mantener coherencia.
+
+  Lugar 3: main.js
+     Búsqueda "mailto:comercial@lmcsistemas.com" y cámbialo.
+     Es el destino del formulario.
+
+
+----------------------------------------------------------------
+  5 · CÓMO AÑADIR UN NUEVO CASO DE ÉXITO (PROYECTO)
+----------------------------------------------------------------
+
+  Los 8 proyectos están en index.html dentro de
+  <div class="projects-track" data-projects>.
+
+  Para añadir uno nuevo, copia el bloque <article class="project-card">
+  completo (de uno existente) y pégalo después del último.
+  Luego cambia:
+    - número (P09)
+    - tipo
+    - título
+    - imagen (sube nueva foto a assets/img/ y referénciala)
+    - challenge / solución / resultado
+    - tecnologías
+
+  Si solo cambias texto y mantienes la foto, no necesitas tocar nada más.
+
+
+----------------------------------------------------------------
+  6 · CÓMO CAMBIAR LAS FOTOS DE LOS PROYECTOS
+----------------------------------------------------------------
+
+  Tienes 8 imágenes en assets/img/ (proj-1-..., proj-2-...).
+  Para cambiar una:
+
+  1. Sube tu nueva foto a assets/img/ con un nombre claro
+     (ej. proj-1-datacenter.jpg).
+  2. En index.html busca el <img src="assets/img/proj-1-..." y
+     cámbialo por la ruta de tu nueva foto.
+  3. Recomendación: usa fotos en formato JPG, ratio 16:9,
+     anchura entre 1200 y 1800 px, peso < 400 KB.
+
+
+----------------------------------------------------------------
+  7 · "HE CAMBIADO ALGO Y NO SE VE EN LA WEB"
+----------------------------------------------------------------
+
+  Es CASI siempre la caché. Soluciones por orden:
+
+  1. Ctrl + F5 (Windows) o Cmd + Shift + R (Mac).
+     Fuerza recarga sin caché.
+
+  2. Si sigue sin verse: abre en una ventana de incógnito.
+     Si en incógnito SÍ se ve, era caché del navegador.
+
+  3. Si sigue sin verse en incógnito: verifica que subiste el
+     archivo correcto a Hostinger.
+
+  4. Para que TODOS los visitantes vean la nueva versión a la
+     primera, edita index.html y cambia las líneas con ?v=20260610
+     a ?v= con la fecha de hoy en formato YYYYMMDD.
+     Ejemplo: ?v=20261125 (25 de noviembre de 2026).
+     Esto fuerza al navegador a descargar de cero los CSS y JS.
+
+
+----------------------------------------------------------------
+  8 · "EL FORMULARIO DE CONTACTO NO ENVÍA EMAIL"
+----------------------------------------------------------------
+
+  Por defecto, el formulario abre el cliente de correo del usuario
+  con los datos rellenados (mailto:comercial@lmcsistemas.com).
+
+  Para envío REAL desde el servidor, hay dos vías:
+
+  A) Servicio gratuito tipo Formspree, Web3Forms o Getform:
+     1. Date de alta en uno de ellos (10 min).
+     2. Te darán una URL tipo https://formspree.io/f/XXXX.
+     3. En index.html, en la línea <form class="contact-form"...>
+        añade: action="https://formspree.io/f/XXXX" method="POST".
+     4. En main.js, comenta la sección "Mailto fallback" para que
+        envíe a Formspree directamente.
+
+  B) Mantén el mailto (lo más sencillo): el cliente sigue
+     recibiendo todas las consultas en su buzón sin coste extra.
+
+
+----------------------------------------------------------------
+  9 · SOPORTE TÉCNICO
+----------------------------------------------------------------
+
+  Si algo no funciona y no eres capaz de arreglarlo, contacta con
+  quien te entregó la web. NO sigas tocando archivos si tienes
+  duda — siempre haz copia ANTES.
+
+  Recuerda: esta es la versión 2026-06-10 (versión del cache-buster).
+
+================================================================
+  Hecho con precisión técnica · Para LMC Sistemas · 2001-2026
+================================================================
