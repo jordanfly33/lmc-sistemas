@@ -1626,3 +1626,153 @@ a.contact-val:hover { color: var(--mint); }
   .hero-net, .hero-scroll, .footer-big { display: none !important; }
   body { background: white; color: black; }
 }
+
+/* =============================================================
+   21. Form v2 — validación, toast, mapa, honeypot
+   ============================================================= */
+
+/* Honeypot — invisible para humanos, visible para bots */
+.form-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  tab-size: 0;
+}
+
+/* Campo con error */
+.contact-form input.is-error,
+.contact-form textarea.is-error,
+.contact-form select.is-error {
+  border-color: #FF4D6D !important;
+  background: rgba(255, 77, 109, 0.06);
+}
+
+/* Mensaje de error bajo el campo */
+.field-error {
+  display: block;
+  min-height: 1.1em;
+  margin-top: 0.3rem;
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  color: #FF4D6D;
+  letter-spacing: 0.01em;
+}
+.field-error:empty { display: none; }
+
+/* Asterisco requerido */
+.req {
+  font-style: normal;
+  color: #FF4D6D;
+  margin-left: 0.15em;
+}
+
+/* Checkbox privacidad */
+.form-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  cursor: pointer;
+}
+.form-check input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.15em;
+  accent-color: var(--mint);
+  cursor: pointer;
+}
+.form-check span {
+  font-size: 0.8rem;
+  color: var(--text-muted, rgba(245,247,250,0.55));
+  line-height: 1.5;
+}
+.form-check-link {
+  color: var(--blue);
+  text-decoration: underline;
+}
+.form-check.is-error .field-error--check {
+  display: block;
+  width: 100%;
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  color: #FF4D6D;
+}
+
+/* Acciones del formulario */
+.form-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.75rem;
+}
+
+/* Enlace alternativo "llámanos" */
+.form-tel-alt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+  font-family: var(--mono);
+  color: var(--text-muted, rgba(245,247,250,0.5));
+  transition: color 0.2s var(--ease-out);
+  text-decoration: none;
+}
+.form-tel-alt:hover { color: var(--mint); }
+.form-tel-alt svg { flex-shrink: 0; }
+
+/* Toast feedback */
+.form-toast {
+  display: none;
+  padding: 0.85rem 1.2rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-family: var(--mono);
+  line-height: 1.45;
+  margin-top: 1rem;
+}
+.form-toast.is-success {
+  display: block;
+  background: rgba(0, 212, 170, 0.12);
+  border: 1px solid rgba(0, 212, 170, 0.35);
+  color: #00D4AA;
+}
+.form-toast.is-error {
+  display: block;
+  background: rgba(255, 77, 109, 0.1);
+  border: 1px solid rgba(255, 77, 109, 0.3);
+  color: #FF4D6D;
+}
+
+/* Mapa Google Maps */
+.contact-map {
+  margin-top: 2rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(245, 247, 250, 0.08);
+  aspect-ratio: 16 / 7;
+  background: rgba(42, 46, 62, 0.6);
+}
+.contact-map iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  filter: grayscale(0.3) contrast(1.05);
+}
+
+/* Estado enviando — deshabilitar botón */
+.contact-form.is-sending .form-submit {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+@media (max-width: 539px) {
+  .form-actions { flex-direction: column; align-items: flex-start; }
+  .contact-map  { aspect-ratio: 4 / 3; }
+}

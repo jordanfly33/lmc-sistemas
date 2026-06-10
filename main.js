@@ -9,9 +9,8 @@
      ------------------------------------------------------------ */
   var $  = function (sel, scope) { return (scope || document).querySelector(sel); };
   var $$ = function (sel, scope) { return Array.prototype.slice.call((scope || document).querySelectorAll(sel)); };
-  var reduced    = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var fineHover  = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var touchOnly  = matchMedia("(hover: none)").matches;
+  var reduced   = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fineHover = matchMedia("(hover: hover) and (pointer: fine)").matches;
 
   function safe(fn, name) {
     try { fn(); } catch (e) { console.warn("[" + name + "] failed:", e); }
@@ -44,14 +43,13 @@
      2. Nav: scroll state + smooth anchors + burger
      ------------------------------------------------------------ */
   function initNav() {
-    var nav     = $("[data-nav]");
-    var burger  = $("[data-burger]");
-    var drawer  = $("[data-drawer]");
+    var nav    = $("[data-nav]");
+    var burger = $("[data-burger]");
+    var drawer = $("[data-drawer]");
 
     if (nav) {
       var onScroll = function () {
-        if (window.scrollY > 24) nav.classList.add("is-scrolled");
-        else nav.classList.remove("is-scrolled");
+        nav.classList.toggle("is-scrolled", window.scrollY > 24);
       };
       onScroll();
       window.addEventListener("scroll", onScroll, { passive: true });
@@ -74,7 +72,6 @@
       });
     }
 
-    // Smooth anchors with nav offset (native, no Lenis)
     document.addEventListener("click", function (e) {
       var a = e.target.closest('a[href^="#"]');
       if (!a) return;
@@ -83,9 +80,8 @@
       var el = document.querySelector(id);
       if (!el) return;
       e.preventDefault();
-      var top = el.getBoundingClientRect().top + window.scrollY - 72;
       window.scrollTo({
-        top: top,
+        top: el.getBoundingClientRect().top + window.scrollY - 72,
         behavior: reduced ? "auto" : "smooth"
       });
     });
@@ -111,12 +107,9 @@
     }, { threshold: 0.04, rootMargin: "0px 0px -2% 0px" });
     targets.forEach(function (t) { io.observe(t); });
 
-    // 6s safety net
     setTimeout(function () {
       $$("[data-reveal]:not(.is-visible), .reveal:not(.is-visible)").forEach(function (el) {
-        if (el.getBoundingClientRect().top < window.innerHeight) {
-          el.classList.add("is-visible");
-        }
+        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-visible");
       });
     }, 6000);
   }
@@ -133,19 +126,13 @@
     }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-traced");
-          io.unobserve(entry.target);
-        }
+        if (entry.isIntersecting) { entry.target.classList.add("is-traced"); io.unobserve(entry.target); }
       });
     }, { threshold: 0.2 });
     icons.forEach(function (i) { io.observe(i); });
-
     setTimeout(function () {
       $$(".svg-trace:not(.is-traced)").forEach(function (el) {
-        if (el.getBoundingClientRect().top < window.innerHeight) {
-          el.classList.add("is-traced");
-        }
+        if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add("is-traced");
       });
     }, 6000);
   }
@@ -160,10 +147,10 @@
     function animate(node) {
       var target = parseInt(node.getAttribute("data-count"), 10) || 0;
       if (reduced) { node.textContent = target; return; }
-      var start = performance.now();
+      var start    = performance.now();
       var duration = 1800;
       function tick(t) {
-        var p = Math.min(1, (t - start) / duration);
+        var p     = Math.min(1, (t - start) / duration);
         var eased = 1 - Math.pow(1 - p, 3);
         node.textContent = Math.round(target * eased);
         if (p < 1) requestAnimationFrame(tick);
@@ -172,16 +159,10 @@
       requestAnimationFrame(tick);
     }
 
-    if (typeof IntersectionObserver === "undefined") {
-      nodes.forEach(animate);
-      return;
-    }
+    if (typeof IntersectionObserver === "undefined") { nodes.forEach(animate); return; }
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          animate(entry.target);
-          io.unobserve(entry.target);
-        }
+        if (entry.isIntersecting) { animate(entry.target); io.unobserve(entry.target); }
       });
     }, { threshold: 0.3 });
     nodes.forEach(function (n) { io.observe(n); });
@@ -191,111 +172,237 @@
      6. Projects carousel (scroll-snap + prev/next + progress)
      ------------------------------------------------------------ */
   function initProjects() {
-    var track = $("[data-projects]");
+    var track    = $("[data-projects]");
     if (!track) return;
-    var prev    = $("[data-prev]");
-    var next    = $("[data-next]");
+    var prev     = $("[data-prev]");
+    var next     = $("[data-next]");
     var progress = $("[data-progress]");
 
     function step() {
       var card = track.querySelector(".project-card");
       if (!card) return 480;
-      var gap = parseFloat(getComputedStyle(track).gap) || 24;
-      return card.getBoundingClientRect().width + gap;
+      return card.getBoundingClientRect().width + (parseFloat(getComputedStyle(track).gap) || 24);
     }
     function updateProgress() {
       if (!progress) return;
-      var max = track.scrollWidth - track.clientWidth;
+      var max   = track.scrollWidth - track.clientWidth;
       var ratio = max > 0 ? track.scrollLeft / max : 0;
-      var fill = 12 + ratio * 88;
-      progress.style.width = fill + "%";
+      progress.style.width = (12 + ratio * 88) + "%";
     }
-    if (prev) prev.addEventListener("click", function () {
-      track.scrollBy({ left: -step(), behavior: reduced ? "auto" : "smooth" });
-    });
-    if (next) next.addEventListener("click", function () {
-      track.scrollBy({ left:  step(), behavior: reduced ? "auto" : "smooth" });
-    });
+    if (prev) prev.addEventListener("click", function () { track.scrollBy({ left: -step(), behavior: reduced ? "auto" : "smooth" }); });
+    if (next) next.addEventListener("click", function () { track.scrollBy({ left:  step(), behavior: reduced ? "auto" : "smooth" }); });
     track.addEventListener("scroll", updateProgress, { passive: true });
     window.addEventListener("resize", updateProgress);
     updateProgress();
-
-    // Keyboard nav (desktop)
+    track.setAttribute("tabindex", "0");
     track.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowRight") { e.preventDefault(); track.scrollBy({ left: step(), behavior: "smooth" }); }
+      if (e.key === "ArrowRight") { e.preventDefault(); track.scrollBy({ left:  step(), behavior: "smooth" }); }
       if (e.key === "ArrowLeft")  { e.preventDefault(); track.scrollBy({ left: -step(), behavior: "smooth" }); }
     });
-    track.setAttribute("tabindex", "0");
   }
 
   /* ------------------------------------------------------------
-     7. Contact form (validation + simulated submit + mailto)
+     7. Contact form — Formspree + rate limiting + honeypot
      ------------------------------------------------------------ */
   function initForm() {
     var form = $("[data-form]");
     if (!form) return;
-    var success = $("[data-form-success]");
-    var submitBtn = form.querySelector(".form-submit");
 
-    function validate() {
-      var ok = true;
-      $$("input, textarea, select", form).forEach(function (field) {
-        if (field.hasAttribute("required") && !field.value.trim()) {
-          field.style.borderColor = "#FF4D6D";
-          ok = false;
-        } else {
-          field.style.borderColor = "";
-        }
-      });
-      var email = form.querySelector('input[type="email"]');
-      if (email && email.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-        email.style.borderColor = "#FF4D6D";
-        ok = false;
-      }
-      return ok;
+    /* Rate limiting: máx 3 envíos en 5 minutos */
+    var RATE_KEY = "lmc_rate";
+    var RATE_MAX = 3;
+    var RATE_WIN = 5 * 60 * 1000;
+
+    function getRateData() {
+      try { return JSON.parse(localStorage.getItem(RATE_KEY) || "{}"); } catch (_) { return {}; }
+    }
+    function isRateLimited() {
+      var d = getRateData();
+      if (!d.start || Date.now() - d.start > RATE_WIN) return false;
+      return (d.count || 0) >= RATE_MAX;
+    }
+    function trackSend() {
+      try {
+        var d   = getRateData();
+        var now = Date.now();
+        if (!d.start || now - d.start > RATE_WIN) d = { start: now, count: 0 };
+        d.count = (d.count || 0) + 1;
+        localStorage.setItem(RATE_KEY, JSON.stringify(d));
+      } catch (_) {}
     }
 
+    /* Configura acción Formspree desde manifest */
+    var cfg     = window.__LMC__ || {};
+    var spreeId = (cfg.contact && cfg.contact.formspree_id) || "";
+    if (spreeId) {
+      form.setAttribute("action", "https://formspree.io/f/" + spreeId);
+      form.setAttribute("method", "POST");
+    }
+
+    var submitBtn  = form.querySelector(".form-submit");
+    var submitSpan = submitBtn ? submitBtn.querySelector("span") : null;
+    var toastEl    = $("[data-toast]");
+    var successEl  = $("[data-form-success]");
+    var honeypot   = form.querySelector('[name="_gotcha"]');
+    var origLabel  = ((cfg.contactForm || {}).submitLabel) || "Enviar solicitud";
+    var privCheck  = form.querySelector('[name="privacy"]');
+
+    /* Toast */
+    function showToast(msg, type) {
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.className   = "form-toast is-" + type;
+      clearTimeout(toastEl._tid);
+      toastEl._tid = setTimeout(function () { toastEl.className = "form-toast"; }, 7000);
+    }
+
+    /* Validación por campo */
+    function getFieldError(field) {
+      var v    = field.value.trim();
+      var name = field.name;
+      if (field.required && !v) return "Campo obligatorio.";
+      if (name === "email" && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v))
+        return "Introduce un email válido.";
+      if (name === "phone" && v) {
+        var clean = v.replace(/[\s.\-()]/g, "");
+        if (!/^(\+34|0034)?[6789]\d{8}$/.test(clean))
+          return "Teléfono no válido (ej: +34 600 000 000).";
+      }
+      if (name === "description" && v && v.length < 20)
+        return "Mínimo 20 caracteres (" + v.length + "/20).";
+      return "";
+    }
+
+    function setFieldError(field, msg) {
+      var wrap  = field.closest("label, .form-textarea");
+      var errEl = wrap && wrap.querySelector(".field-error");
+      if (errEl) errEl.textContent = msg;
+      field.classList.toggle("is-error", !!msg);
+      field.setAttribute("aria-invalid", msg ? "true" : "false");
+    }
+
+    /* Validación en tiempo real */
+    $$("input:not([name='_gotcha']):not([name='privacy']):not([type='checkbox']), textarea, select", form).forEach(function (f) {
+      f.addEventListener("blur",   function () { setFieldError(f, getFieldError(f)); });
+      f.addEventListener("input",  function () { if (f.classList.contains("is-error")) setFieldError(f, getFieldError(f)); });
+      f.addEventListener("change", function () { setFieldError(f, getFieldError(f)); });
+    });
+
+    if (privCheck) {
+      privCheck.addEventListener("change", function () {
+        var lbl = privCheck.closest("label");
+        if (lbl && privCheck.checked) {
+          lbl.classList.remove("is-error");
+          var errEl = lbl.querySelector(".field-error");
+          if (errEl) errEl.textContent = "";
+        }
+      });
+    }
+
+    /* Submit */
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      if (!validate()) return;
 
-      form.classList.add("is-sending");
-      if (submitBtn) submitBtn.querySelector("span").textContent = "Enviando…";
+      if (honeypot && honeypot.value) return; /* bot */
 
-      // Simulate request (would be replaced by real endpoint or kept as mailto fallback)
-      setTimeout(function () {
-        form.classList.remove("is-sending");
-        if (success) success.classList.add("is-visible");
+      if (isRateLimited()) {
+        showToast("Demasiados intentos. Espera unos minutos o llámanos al +34 93 139 42 24.", "error");
+        return;
+      }
 
-        // Mailto fallback: open user's mail client with prefilled body so message
-        // is delivered even if backend not configured.
-        try {
-          var fd = new FormData(form);
-          var body = [
-            "Empresa: " + (fd.get("company") || ""),
-            "Contacto: " + (fd.get("contact") || ""),
-            "Teléfono: " + (fd.get("phone") || ""),
-            "Email: " + (fd.get("email") || ""),
-            "Tipo de proyecto: " + (fd.get("projectType") || ""),
-            "Presupuesto: " + (fd.get("budget") || ""),
-            "",
-            "Descripción:",
-            (fd.get("description") || "")
-          ].join("\n");
-          var subject = "Solicitud de consultoría · " + (fd.get("company") || "Nuevo contacto");
-          var href = "mailto:comercial@lmcsistemas.com" +
-                     "?subject=" + encodeURIComponent(subject) +
-                     "&body="    + encodeURIComponent(body);
-          window.location.href = href;
-        } catch (err) { /* swallow */ }
-      }, 900);
+      if (privCheck && !privCheck.checked) {
+        var lbl = privCheck.closest("label");
+        if (lbl) {
+          lbl.classList.add("is-error");
+          var errEl = lbl.querySelector(".field-error");
+          if (errEl) errEl.textContent = "Debes aceptar la política de privacidad.";
+        }
+        showToast("Acepta la política de privacidad para continuar.", "error");
+        return;
+      }
+
+      var allOk = true;
+      $$("input:not([name='_gotcha']):not([name='privacy']):not([type='checkbox']), textarea, select", form).forEach(function (f) {
+        var err = getFieldError(f);
+        setFieldError(f, err);
+        if (err) allOk = false;
+      });
+      if (!allOk) {
+        showToast("Revisa los campos marcados en rojo.", "error");
+        var firstErr = form.querySelector(".is-error");
+        if (firstErr) firstErr.focus();
+        return;
+      }
+
+      setSending(true);
+
+      var action       = form.getAttribute("action") || "";
+      var contactEmail = (cfg.contact && cfg.contact.email) || "comercial@lmcsistemas.com";
+
+      if (action.indexOf("formspree.io") !== -1) {
+        var fd = new FormData(form);
+        fetch(action, { method: "POST", body: fd, headers: { "Accept": "application/json" } })
+          .then(function (res) {
+            trackSend();
+            if (res.ok) {
+              onSuccess();
+            } else {
+              res.json().then(function (data) {
+                var msg = data.errors && data.errors[0] && data.errors[0].message;
+                onError(msg || null);
+              }).catch(function () { onError(null); });
+            }
+          })
+          .catch(function () { trackSend(); onMailto(contactEmail); })
+          .then(function () { setSending(false); });
+      } else {
+        setTimeout(function () {
+          trackSend();
+          onMailto(contactEmail);
+          setSending(false);
+        }, 600);
+      }
     });
 
-    // Live-clear red border on input
-    $$("input, textarea, select", form).forEach(function (f) {
-      f.addEventListener("input", function () { f.style.borderColor = ""; });
-      f.addEventListener("change", function () { f.style.borderColor = ""; });
-    });
+    function setSending(s) {
+      form.classList.toggle("is-sending", s);
+      if (submitBtn)  submitBtn.disabled       = s;
+      if (submitSpan) submitSpan.textContent   = s ? "Enviando…" : origLabel;
+    }
+
+    function onSuccess() {
+      if (successEl) { successEl.classList.add("is-visible"); successEl.removeAttribute("aria-hidden"); }
+      showToast("Solicitud enviada. Te respondemos en 24 h laborables.", "success");
+      form.reset();
+      $$(".field-error", form).forEach(function (el) { el.textContent = ""; });
+      $$(".is-error",    form).forEach(function (el) { el.classList.remove("is-error"); });
+    }
+
+    function onError(msg) {
+      showToast(msg || "Error al enviar. Llámanos al +34 93 139 42 24.", "error");
+    }
+
+    function onMailto(email) {
+      try {
+        var fd2  = new FormData(form);
+        var body = [
+          "Empresa: "     + (fd2.get("company")    || ""),
+          "Contacto: "    + (fd2.get("contact")     || ""),
+          "Teléfono: "    + (fd2.get("phone")       || ""),
+          "Email: "       + (fd2.get("email")        || ""),
+          "Proyecto: "    + (fd2.get("projectType") || ""),
+          "Presupuesto: " + (fd2.get("budget")       || ""),
+          "",
+          "Descripción:",
+          (fd2.get("description") || "")
+        ].join("\n");
+        var subj = "Solicitud de consultoría · " + (fd2.get("company") || "Nuevo contacto");
+        window.location.href = "mailto:" + email +
+          "?subject=" + encodeURIComponent(subj) +
+          "&body="    + encodeURIComponent(body);
+        onSuccess();
+      } catch (_) { onError(null); }
+    }
   }
 
   /* ------------------------------------------------------------
@@ -314,45 +421,39 @@
 
     window.addEventListener("mousemove", function (e) {
       mx = e.clientX; my = e.clientY;
-      dot.style.transform = "translate3d(" + mx + "px, " + my + "px, 0) translate(-50%, -50%)";
+      dot.style.transform = "translate3d(" + mx + "px," + my + "px,0) translate(-50%,-50%)";
       if (!firstMove) {
-        firstMove = true;
-        rx = mx; ry = my;
-        ring.style.transform = "translate3d(" + rx + "px, " + ry + "px, 0) translate(-50%, -50%)";
+        firstMove = true; rx = mx; ry = my;
+        ring.style.transform = "translate3d(" + rx + "px," + ry + "px,0) translate(-50%,-50%)";
         cursor.classList.add("is-ready");
       }
     });
 
-    function loop() {
-      rx += (mx - rx) * 0.18;
-      ry += (my - ry) * 0.18;
-      ring.style.transform = "translate3d(" + rx + "px, " + ry + "px, 0) translate(-50%, -50%)";
+    (function loop() {
+      rx += (mx - rx) * 0.18; ry += (my - ry) * 0.18;
+      ring.style.transform = "translate3d(" + rx + "px," + ry + "px,0) translate(-50%,-50%)";
       requestAnimationFrame(loop);
-    }
-    requestAnimationFrame(loop);
+    })();
 
-    // Hover label
-    var hoverables = "[data-cursor], a, button, label, input, textarea, select";
+    var HV = "[data-cursor], a, button, label, input, textarea, select";
     document.addEventListener("mouseover", function (e) {
-      var t = e.target.closest(hoverables);
+      var t = e.target.closest(HV);
       if (!t) return;
-      var msg = t.getAttribute("data-cursor");
+      var msg = t.getAttribute("data-cursor") || "";
       if (!msg) {
-        if (t.tagName === "A")      msg = "ir";
+        if (t.tagName === "A") msg = "ir";
         else if (t.tagName === "BUTTON") msg = "pulsar";
         else if (t.matches("input, textarea, select, label")) msg = "escribir";
       }
-      label.textContent = msg || "";
+      label.textContent = msg;
       cursor.classList.add("is-hover");
     });
     document.addEventListener("mouseout", function (e) {
-      var t = e.target.closest(hoverables);
+      var t = e.target.closest(HV);
       if (!t) return;
       if (e.relatedTarget && t.contains(e.relatedTarget)) return;
       cursor.classList.remove("is-hover");
     });
-
-    // Hide near window edges (avoid stuck state)
     document.addEventListener("mouseleave", function () { cursor.classList.remove("is-ready"); });
     document.addEventListener("mouseenter", function () { cursor.classList.add("is-ready"); });
   }
@@ -365,18 +466,16 @@
     var links    = $$(".nav-links a");
     if (!sections.length || !links.length) return;
     if (typeof IntersectionObserver === "undefined") return;
-
     var map = {};
     links.forEach(function (l) {
-      var id = l.getAttribute("href");
-      if (id) map[id.replace("#", "")] = l;
+      var id = (l.getAttribute("href") || "").replace("#", "");
+      if (id) map[id] = l;
     });
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (entry.isIntersecting) {
-          var id = entry.target.id;
           links.forEach(function (l) { l.classList.remove("is-active"); });
-          if (map[id]) map[id].classList.add("is-active");
+          if (map[entry.target.id]) map[entry.target.id].classList.add("is-active");
         }
       });
     }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
@@ -389,34 +488,17 @@
   function initGsapAnimations() {
     if (!window.gsap || !window.ScrollTrigger) return;
     try { gsap.registerPlugin(ScrollTrigger); } catch (_) {}
-
-    // Section numbers — subtle parallax
     $$(".section-num").forEach(function (n) {
       gsap.to(n, {
-        yPercent: -30,
-        ease: "none",
-        scrollTrigger: {
-          trigger: n.closest(".section"),
-          start: "top bottom",
-          end:   "bottom top",
-          scrub: 0.6
-        }
+        yPercent: -30, ease: "none",
+        scrollTrigger: { trigger: n.closest(".section"), start: "top bottom", end: "bottom top", scrub: 0.6 }
       });
     });
-
-    // Hero title floats up slightly on scroll
     var heroTitle = $(".hero-title");
     if (heroTitle && !reduced) {
       gsap.to(heroTitle, {
-        yPercent: -8,
-        opacity: 0.6,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end:   "bottom top",
-          scrub: 0.4
-        }
+        yPercent: -8, opacity: 0.6, ease: "none",
+        scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 0.4 }
       });
     }
   }
@@ -425,16 +507,16 @@
      Boot
      ------------------------------------------------------------ */
   function boot() {
-    safe(initSplash,        "initSplash");
-    safe(initNav,           "initNav");
-    safe(initReveals,       "initReveals");
-    safe(initSvgTrace,      "initSvgTrace");
-    safe(initCounters,      "initCounters");
-    safe(initProjects,      "initProjects");
-    safe(initForm,          "initForm");
-    safe(initCursor,        "initCursor");
-    safe(initNavHighlight,  "initNavHighlight");
-    safe(initGsapAnimations,"initGsapAnimations");
+    safe(initSplash,         "initSplash");
+    safe(initNav,            "initNav");
+    safe(initReveals,        "initReveals");
+    safe(initSvgTrace,       "initSvgTrace");
+    safe(initCounters,       "initCounters");
+    safe(initProjects,       "initProjects");
+    safe(initForm,           "initForm");
+    safe(initCursor,         "initCursor");
+    safe(initNavHighlight,   "initNavHighlight");
+    safe(initGsapAnimations, "initGsapAnimations");
     document.documentElement.classList.add("is-ready");
   }
 

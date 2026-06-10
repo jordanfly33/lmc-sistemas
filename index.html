@@ -810,7 +810,7 @@
           <ul class="contact-data">
             <li>
               <span class="contact-key">Teléfono</span>
-              <a class="contact-val" href="tel:+34900000000" data-cursor="llamar">+34 900 000 000</a>
+              <a class="contact-val" href="tel:+34931394224" data-cursor="llamar">+34 93 139 42 24</a>
             </li>
             <li>
               <span class="contact-key">Email</span>
@@ -818,7 +818,7 @@
             </li>
             <li>
               <span class="contact-key">Dirección</span>
-              <span class="contact-val">Polígono Industrial · Madrid, España</span>
+              <span class="contact-val">Edificio Nodus · Oficina 202<br/>Pol. Ind. Can Salvatella · Carrer Mogoda, 1<br/>08210 Barberá del Vallès (Barcelona)</span>
             </li>
             <li>
               <span class="contact-key">Horario</span>
@@ -829,32 +829,50 @@
               <span class="contact-val"><i class="dot-pulse"></i> 24/7 para clientes con contrato</span>
             </li>
           </ul>
+
+          <!-- Mapa Google Maps -->
+          <div class="contact-map">
+            <iframe
+              src="https://www.google.com/maps?q=41.5486,2.1168&z=16&output=embed"
+              title="LMC Sistemas — Barberá del Vallès (Barcelona)"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              allowfullscreen>
+            </iframe>
+          </div>
         </header>
 
         <form class="contact-form" data-form novalidate>
+          <!-- Honeypot anti-spam (oculto, no tocar) -->
+          <input type="text" name="_gotcha" class="form-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
           <div class="form-row">
             <label>
-              <span>Empresa</span>
-              <input type="text" name="company" required autocomplete="organization" />
+              <span>Empresa <em class="req">*</em></span>
+              <input type="text" name="company" required autocomplete="organization" placeholder="Nombre de tu empresa" />
+              <span class="field-error" aria-live="polite"></span>
             </label>
             <label>
-              <span>Persona de contacto</span>
-              <input type="text" name="contact" required autocomplete="name" />
+              <span>Persona de contacto <em class="req">*</em></span>
+              <input type="text" name="contact" required autocomplete="name" placeholder="Tu nombre y apellido" />
+              <span class="field-error" aria-live="polite"></span>
             </label>
           </div>
           <div class="form-row">
             <label>
-              <span>Teléfono</span>
-              <input type="tel" name="phone" autocomplete="tel" />
+              <span>Teléfono <em class="req">*</em></span>
+              <input type="tel" name="phone" required autocomplete="tel" placeholder="+34 6XX XXX XXX" />
+              <span class="field-error" aria-live="polite"></span>
             </label>
             <label>
-              <span>Email</span>
-              <input type="email" name="email" required autocomplete="email" />
+              <span>Email <em class="req">*</em></span>
+              <input type="email" name="email" required autocomplete="email" placeholder="correo@empresa.com" />
+              <span class="field-error" aria-live="polite"></span>
             </label>
           </div>
           <div class="form-row">
             <label>
-              <span>Tipo de proyecto</span>
+              <span>Tipo de proyecto <em class="req">*</em></span>
               <select name="projectType" required>
                 <option value="">Selecciona…</option>
                 <option>CCTV &amp; Vigilancia</option>
@@ -866,6 +884,7 @@
                 <option>Soporte / Mantenimiento</option>
                 <option>Otro</option>
               </select>
+              <span class="field-error" aria-live="polite"></span>
             </label>
             <label>
               <span>Presupuesto estimado <em>(opcional)</em></span>
@@ -879,26 +898,37 @@
             </label>
           </div>
           <label class="form-textarea">
-            <span>Describe brevemente el proyecto</span>
-            <textarea name="description" rows="5" required></textarea>
+            <span>Describe brevemente el proyecto <em class="req">*</em></span>
+            <textarea name="description" rows="5" required minlength="20" placeholder="Cuéntanos qué necesitas (mínimo 20 caracteres)…"></textarea>
+            <span class="field-error" aria-live="polite"></span>
           </label>
 
-          <p class="form-privacy">
-            Tus datos se utilizan únicamente para responder a tu solicitud.
-            Cumplimos RGPD y nunca compartiremos tu información con terceros.
-          </p>
+          <label class="form-check">
+            <input type="checkbox" name="privacy" required />
+            <span>He leído y acepto la <a href="#" class="form-check-link">política de privacidad</a>. Mis datos se usarán únicamente para responder a esta solicitud. <em class="req">*</em></span>
+            <span class="field-error field-error--check" aria-live="polite"></span>
+          </label>
 
-          <button class="btn btn-primary form-submit" type="submit" data-cursor="enviar">
-            <span>Enviar solicitud</span>
-            <i aria-hidden="true">→</i>
-          </button>
+          <!-- Toast de feedback (éxito / error) -->
+          <div class="form-toast" data-toast role="alert" aria-live="polite"></div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary form-submit" type="submit" data-cursor="enviar">
+              <span>Enviar solicitud</span>
+              <i aria-hidden="true">→</i>
+            </button>
+            <a class="form-tel-alt" href="tel:+34931394224" data-cursor="llamar">
+              <svg viewBox="0 0 20 20" aria-hidden="true" width="16" height="16"><path d="M3.5 3a1 1 0 0 1 .9.55l1.5 3a1 1 0 0 1-.1 1l-.8.8a8.1 8.1 0 0 0 3.65 3.65l.8-.8a1 1 0 0 1 1-.1l3 1.5a1 1 0 0 1 .55.9v2a1 1 0 0 1-1 1C7.15 17 3 12.85 3 7.5a1 1 0 0 1 1-1H3.5Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+              O llámanos · +34 93 139 42 24
+            </a>
+          </div>
 
           <div class="form-success" data-form-success aria-hidden="true">
             <svg viewBox="0 0 48 48" aria-hidden="true">
               <circle cx="24" cy="24" r="22" fill="none" stroke="currentColor" stroke-width="1.6"/>
               <path d="M14 24 L21 31 L34 17" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
-            <p>Solicitud enviada. Te respondemos en menos de 24 h laborables.</p>
+            <p>Solicitud enviada. Te respondemos en menos de 24&nbsp;h laborables.</p>
           </div>
         </form>
       </div>
@@ -955,7 +985,7 @@
         <div class="footer-col">
           <h4>Contacto</h4>
           <ul>
-            <li><a href="tel:+34900000000">+34 900 000 000</a></li>
+            <li><a href="tel:+34931394224">+34 93 139 42 24</a></li>
             <li><a href="mailto:comercial@lmcsistemas.com">comercial@lmcsistemas.com</a></li>
             <li><a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
           </ul>
