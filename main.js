@@ -337,7 +337,7 @@
       setSending(true);
 
       var action       = form.getAttribute("action") || "";
-      var contactEmail = (cfg.contact && cfg.contact.email) || "comercial@lmcsistemas.com";
+      var contactEmail = (cfg.contact && cfg.contact.email) || "lmcsistemas@lmcsistemas.com";
 
       if (action.indexOf("formspree.io") !== -1) {
         var fd = new FormData(form);
