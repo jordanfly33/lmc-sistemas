@@ -1,0 +1,35 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aidescubierto",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "3333"],
+      "port": 3333
+    },
+    {
+      "name": "lmc-static",
+      "runtimeExecutable": "py",
+      "runtimeArgs": ["-m", "http.server", "8765", "--directory", "lmc-sistemas"],
+      "port": 8765
+    },
+    {
+      "name": "pulso",
+      "runtimeExecutable": "C:\\Program Files\\nodejs\\node.exe",
+      "runtimeArgs": ["C:\\Users\\bruno\\AppData\\Local\\Temp\\pulso-server.js"],
+      "port": 4444
+    },
+    {
+      "name": "apuesta-facil",
+      "runtimeExecutable": "py",
+      "runtimeArgs": ["-m", "http.server", "8766", "--directory", "apuesta-facil"],
+      "port": 8766
+    },
+    {
+      "name": "pecatto-burger",
+      "runtimeExecutable": "py",
+      "runtimeArgs": ["-m", "http.server", "8767", "--directory", "pecatto-burger"],
+      "port": 8767
+    }
+  ]
+}

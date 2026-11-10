@@ -1,0 +1,22 @@
+# --- secretos (añadido por Bruno OS) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+token.json
+client_secret*.json
+credentials*.json
+bos.token
+Key.txt
+# --- entornos, dependencias y builds ---
+.venv/
+venv/
+node_modules/
+__pycache__/
+.next/
+# --- local ---
+.claude/settings.local.json
+.DS_Store
+Thumbs.db
+desktop.ini
